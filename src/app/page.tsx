@@ -1,11 +1,9 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import Modal from "./Modal";
-import Image from "next/image";
 import { AnimatePresence } from "motion/react";
-import { json } from "stream/consumers";
 import { toast } from "sonner";
 
 export default function Home() {
@@ -16,6 +14,7 @@ export default function Home() {
       batch: string;
       gender: string;
       status: string;
+      rawNpk: string;
    }
 
    const inputRefs = useRef<HTMLInputElement[]>([]);
@@ -99,25 +98,24 @@ export default function Home() {
       try {
          const fetchData = async () => {
             const res = await fetch(`/api/scrape?npk=${npk}`);
-            if (!res.ok) {
-               const err = await res.json();
-               throw new Error(err.error || "Unknown error");
-            }
-            return res.json();
+            const json = await res.json();
+            if (!res.ok) throw new Error(json.error || "Unknown error");
+            return json;
          };
 
          toast.promise(fetchData(), {
             loading: "Loading...",
-            success: (data: any) => {
+            success: (data: MahasiswaData) => {
                setData({ ...data, rawNpk: raw });
                setOpen(true);
                return "Data berhasil ditemukan!";
             },
-            error: (err: any) => err.message || "Error",
+            error: (err: Error) => err.message || "Error",
          });
-      } catch (err: any) {
+      } catch (err: unknown) {
          toast.error("Error", {
-            description: err.message || "Gagal mengambil data.",
+            description:
+               err instanceof Error ? err.message : "Terjadi kesalahan",
          });
       }
    }
