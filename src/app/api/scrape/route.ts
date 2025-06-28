@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { NextRequest, NextResponse } from "next/server";
 import { unstable_cache } from "next/cache";
 
 // Cached scraping function
@@ -14,13 +15,11 @@ const getCachedStudentData = unstable_cache(
       const html = await response.text();
       const $ = cheerio.load(html);
 
-      // Deteksi data kosong
       const isNotFound = $("h5.p-1").text().toLowerCase().includes("not found");
       if (isNotFound) {
          throw new Error("Data tidak ditemukan");
       }
 
-      // Ambil data
       const nama = $("h5.p-1").first().text().trim();
       let foto = $("img").first().attr("src") || "";
       if (foto && !foto.startsWith("http")) {
@@ -37,37 +36,38 @@ const getCachedStudentData = unstable_cache(
          scrapedAt: new Date().toISOString(),
       };
    },
-   ["student-data"], // cache key prefix
+   ["student-data"],
    {
-      revalidate: 3600, // 1 jam
+      revalidate: 3600,
       tags: ["student-data"],
    },
 );
 
-export async function GET(req: { url: string | URL }) {
+// ✅ FIXED GET handler
+export async function GET(req: NextRequest) {
    const { searchParams } = new URL(req.url);
    const npk = searchParams.get("npk");
 
    if (!npk) {
-      return Response.json({ error: "NPK is required" }, { status: 400 });
+      return NextResponse.json({ error: "NPK is required" }, { status: 400 });
    }
 
    try {
       const result = await getCachedStudentData(npk);
 
-      return Response.json({
+      return NextResponse.json({
          ...result,
-         cached: true, // Next.js akan handle cache secara otomatis
+         cached: true,
       });
    } catch (error) {
       if (error instanceof Error && error.message === "Data tidak ditemukan") {
-         return Response.json(
+         return NextResponse.json(
             { error: "Data tidak ditemukan" },
             { status: 404 },
          );
       }
 
-      return Response.json(
+      return NextResponse.json(
          {
             error: "Scraping failed",
             detail:

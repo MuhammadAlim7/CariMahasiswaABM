@@ -10,7 +10,6 @@ const nextConfig: NextConfig = {
       return config;
    },
    images: {
-      domains: ["scan.stie-mce.ac.id"],
       remotePatterns: [
          {
             protocol: "http",
