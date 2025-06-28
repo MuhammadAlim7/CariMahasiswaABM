@@ -16,28 +16,30 @@ const figtree = Figtree({
 
 export const metadata: Metadata = {
    title: "Cari Foto Mahasiswa ABM",
+   description: "Aplikasi untuk mencari foto mahasiswa ABM",
+   keywords: ["foto mahasiswa", "ABM", "cari foto", "mahasiswa ABM"],
    icons: {
       icon: "/abm.png",
    },
-   description: "Aplikasi untuk mencari foto mahasiswa ABM",
    other: {
-      "google-site-verification": "-VJnWFmz3P8w1snXji-bSPxdfesfhGUaeNezACC4-c0", // paste kode dari Google
+      "google-site-verification": "-VJnWFmz3P8w1snXji-bSPxdfesfhGUaeNezACC4-c0",
+      "theme-color": "#ffffff",
    },
-   keywords: ["foto mahasiswa", "ABM", "cari foto", "mahasiswa ABM"],
+   viewport: "width=device-width, initial-scale=1",
+   robots: {
+      index: true,
+      follow: true,
+   },
    authors: [
       { name: "Muhammad Nur Alim", url: "https://muhammadalim7.github.io/" },
    ],
    openGraph: {
       title: "Cari Foto Mahasiswa ABM",
       description: "Aplikasi untuk mencari foto mahasiswa ABM",
-      url: "https://yourwebsite.com",
+      url: "https://cari-mahasiswa-abm.vercel.app/",
       siteName: "Cari Foto Mahasiswa ABM",
       locale: "id_ID",
       type: "website",
-   },
-   robots: {
-      index: true,
-      follow: true,
    },
 };
 
@@ -48,14 +50,6 @@ export default function RootLayout({
 }>) {
    return (
       <html lang="id" suppressHydrationWarning>
-         <head>
-            <meta
-               name="viewport"
-               content="width=device-width, initial-scale=1"
-            />
-            <meta name="theme-color" content="#ffffff" />
-            <link rel="icon" href="/abm.png" />
-         </head>
          <body
             className={`${grotesk.variable} ${figtree.variable} antialiased`}
          >
