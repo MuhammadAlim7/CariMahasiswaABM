@@ -21,7 +21,7 @@ export const metadata: Metadata = {
    },
    description: "Aplikasi untuk mencari foto mahasiswa ABM",
    other: {
-      "google-site-verification": "VJnWFmz3P8w1snXji-bSPxdfesfhGUaeNezACC4-c0", // paste kode dari Google
+      "google-site-verification": "-VJnWFmz3P8w1snXji-bSPxdfesfhGUaeNezACC4-c0", // paste kode dari Google
    },
    keywords: ["foto mahasiswa", "ABM", "cari foto", "mahasiswa ABM"],
    authors: [
