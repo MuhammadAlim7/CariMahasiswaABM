@@ -20,6 +20,9 @@ export const metadata: Metadata = {
       icon: "/abm.png",
    },
    description: "Aplikasi untuk mencari foto mahasiswa ABM",
+   other: {
+      "google-site-verification": "VJnWFmz3P8w1snXji-bSPxdfesfhGUaeNezACC4-c0", // paste kode dari Google
+   },
    keywords: ["foto mahasiswa", "ABM", "cari foto", "mahasiswa ABM"],
    authors: [
       { name: "Muhammad Nur Alim", url: "https://muhammadalim7.github.io/" },
