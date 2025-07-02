@@ -25,7 +25,6 @@ export const metadata: Metadata = {
       "google-site-verification": "-VJnWFmz3P8w1snXji-bSPxdfesfhGUaeNezACC4-c0",
       "theme-color": "#ffffff",
    },
-   viewport: "width=device-width, initial-scale=1",
    robots: {
       index: true,
       follow: true,

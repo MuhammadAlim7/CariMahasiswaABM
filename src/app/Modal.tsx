@@ -97,12 +97,12 @@ export default function Modal({
                         )}
                      />
                   </div>
-                  <div className="flex flex-1 flex-col justify-center gap-4">
+                  <div className="flex flex-1 flex-col justify-center sm:gap-4">
                      <div>
                         <div className="text-sm tracking-wide text-neutral-500">
                            Nama Lengkap
                         </div>
-                        <div className="text-2xl font-bold">
+                        <div className="text-lg font-bold sm:text-2xl">
                            {toTitleCase(data.name)}
                         </div>
                      </div>
@@ -110,24 +110,27 @@ export default function Modal({
                         <div className="text-sm tracking-wide text-neutral-500">
                            Nomor Pokok Mahasiswa
                         </div>
-                        <div className="text-2xl font-bold tracking-wide">
+                        <div className="text-lg font-bold tracking-wide sm:text-2xl">
                            {data.rawNpk}
                         </div>
                      </div>
-                     <div className="flex gap-8">
-                        <div className="">
-                           <div className="text-sm tracking-wide text-neutral-500">
-                              Gender
-                           </div>
-                           <div className="text-2xl font-bold tracking-wide">
-                              {toTitleCase(data.gender)}
-                           </div>
+                     <div className="sm:hidden">
+                        <div className="text-sm tracking-wide text-neutral-500">
+                           <span className="">Program Studi</span>
                         </div>
-                        <div className="">
+                        <div className="text-lg font-bold tracking-wide sm:text-2xl">
+                           {toTitleCase(data.program)}
+                        </div>
+                     </div>
+                     <div className="flex gap-8">
+                        <div className="hidden sm:block">
                            <div className="text-sm tracking-wide text-neutral-500">
-                              Program Studi
+                              <span className="hidden sm:block">
+                                 Program Studi
+                              </span>
+                              <span className="block sm:hidden">Prodi</span>
                            </div>
-                           <div className="text-2xl font-bold tracking-wide">
+                           <div className="font-bold tracking-wide sm:text-2xl">
                               {toTitleCase(data.program)}
                            </div>
                         </div>
@@ -135,8 +138,16 @@ export default function Modal({
                            <div className="text-sm tracking-wide text-neutral-500">
                               Angkatan
                            </div>
-                           <div className="text-2xl font-bold tracking-wide">
+                           <div className="text-lg font-bold tracking-wide sm:text-2xl">
                               {data.batch}
+                           </div>
+                        </div>
+                        <div className="">
+                           <div className="text-sm tracking-wide text-neutral-500">
+                              Gender
+                           </div>
+                           <div className="text-lg font-bold tracking-wide sm:text-2xl">
+                              {toTitleCase(data.gender.slice(0, 1))}
                            </div>
                         </div>
                      </div>

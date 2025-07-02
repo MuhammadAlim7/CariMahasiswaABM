@@ -165,33 +165,69 @@ export default function Home() {
                </span>
             </div>
 
-            <div className="flex items-center rounded-xl border border-gray-300 bg-white p-2">
-               <div className="flex grow items-center justify-between">
-                  {Array.from({ length: 11 }).map((_, i) => (
-                     <div key={i} className="flex items-center">
-                        {i > 0 && (i === 1 || i === 5 || i === 6) && (
-                           <Divider />
-                        )}
-                        <OtpInput
-                           ref={(el) => {
-                              inputRefs.current[i] = el!;
-                           }}
-                           onChange={(e) => handleChange(e, i)}
-                           onKeyDown={(e) => handleKeyDown(e, i)}
-                           onFocus={() => handleFocus(i)}
-                           onBlur={handleBlur}
-                           variant={
-                              i === 1 || i === 6
-                                 ? "left"
-                                 : i === 4 || i === 10
-                                   ? "right"
-                                   : (i >= 2 && i <= 4) || (i >= 7 && i <= 9)
-                                     ? "mid"
-                                     : undefined
-                           }
-                        />
-                     </div>
-                  ))}
+            <div className="flex items-center rounded-xl border border-neutral-300 bg-white p-2">
+               <div className="flex w-full grow flex-col gap-2">
+                  {/* Baris atas: input 0-4 */}
+                  <div className="flex">
+                     {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="flex items-center">
+                           {i > 0 && i === 1 && <Divider />}
+                           <OtpInput
+                              ref={(el) => {
+                                 inputRefs.current[i] = el!;
+                              }}
+                              type={i === 0 ? "text" : "tel"}
+                              inputMode={i === 0 ? "text" : "numeric"}
+                              pattern={i === 0 ? "[A-Za-z]" : "[0-9]"}
+                              onChange={(e) => handleChange(e, i)}
+                              onKeyDown={(e) => handleKeyDown(e, i)}
+                              onFocus={() => handleFocus(i)}
+                              onBlur={handleBlur}
+                              variant={
+                                 i === 1
+                                    ? "left"
+                                    : i === 4
+                                      ? "right"
+                                      : i >= 2 && i <= 4
+                                        ? "mid"
+                                        : undefined
+                              }
+                           />
+                        </div>
+                     ))}
+                  </div>
+                  {/* Baris bawah: input 5-10 */}
+                  <div className="flex">
+                     {Array.from({ length: 6 }).map((_, idx) => {
+                        const i = idx + 5;
+                        return (
+                           <div key={i} className="flex items-center">
+                              {(i === 5 || i === 6) && <Divider />}
+                              <OtpInput
+                                 ref={(el) => {
+                                    inputRefs.current[i] = el!;
+                                 }}
+                                 type="tel"
+                                 inputMode="numeric"
+                                 pattern="[0-9]"
+                                 onChange={(e) => handleChange(e, i)}
+                                 onKeyDown={(e) => handleKeyDown(e, i)}
+                                 onFocus={() => handleFocus(i)}
+                                 onBlur={handleBlur}
+                                 variant={
+                                    i === 6
+                                       ? "left"
+                                       : i === 10
+                                         ? "right"
+                                         : i >= 7 && i <= 9
+                                           ? "mid"
+                                           : undefined
+                                 }
+                              />
+                           </div>
+                        );
+                     })}
+                  </div>
                </div>
             </div>
             <div className="flex items-center justify-between p-2">
@@ -200,14 +236,14 @@ export default function Home() {
                   <button
                      type="reset"
                      onClick={handleReset}
-                     className="h-9 rounded-md border border-gray-300 px-4 text-sm font-semibold text-gray-900"
+                     className="h-9 rounded-md border border-neutral-300 px-4 text-sm font-semibold text-neutral-900"
                   >
                      Reset
                   </button>
                   <button
                      type="submit"
                      ref={submitButtonRef}
-                     className="h-9 rounded-md bg-gray-900 px-4 text-sm font-semibold text-white"
+                     className="h-9 rounded-md bg-neutral-900 px-4 text-sm font-semibold text-white"
                   >
                      Send
                   </button>
@@ -222,7 +258,7 @@ export default function Home() {
 }
 
 const InputVariants = cva(
-   "border-outline border size-9 sm:size-11 text-center text-sm font-semibold text-neutral-800 transition-all focus:z-10 outline-none focus:ring-2 focus:ring-neutral-900 duration-700 ",
+   "border-outline border size-11 text-center text-sm font-semibold text-neutral-800 transition-all focus:z-10 outline-none focus:ring-2 focus:ring-neutral-900 duration-700 ",
    {
       variants: {
          variant: {
@@ -246,7 +282,6 @@ function OtpInput({
    return (
       <input
          required
-         type="text"
          maxLength={1}
          minLength={1}
          className={cn(InputVariants({ variant, className }))}
@@ -258,11 +293,7 @@ function OtpInput({
 function Divider({ className, ...props }: React.ComponentProps<"div">) {
    return (
       <div
-         className={cn(
-            "mx-2 h-6 w-px bg-gray-300",
-            "hidden sm:block",
-            className,
-         )}
+         className={cn("mx-2 h-6 w-px bg-neutral-300", " ", className)}
          {...props}
       />
    );
