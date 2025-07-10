@@ -63,5 +63,5 @@ Untuk saat ini, proyek bersifat closed contribution. Namun, jika Anda memiliki s
 
 Untuk informasi lebih lanjut, kerja sama, atau integrasi sistem:
 
-- Email: [muhammadnurallim9@gmail.com]
+- Email: [muhammadnurallim9@gmail.com](mailto:muhammadnurallim9@gmail.com)
 - GitHub: [@MuhammadAlim7](https://github.com/MuhammadAlim7)
