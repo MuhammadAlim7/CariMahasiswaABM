@@ -22,7 +22,7 @@ export const metadata: Metadata = {
       icon: "/abm.png",
    },
    other: {
-      "google-site-verification": "-VJnWFmz3P8w1snXji-bSPxdfesfhGUaeNezACC4-c0",
+      "google-site-verification": "11ND7Lq7wqVz2HhllgMw5LZWB5FUxTDMtmrbx0LetDQ",
       "theme-color": "#ffffff",
    },
    robots: {
