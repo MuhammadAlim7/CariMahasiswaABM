@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Figtree } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
-import { Toaster } from "sonner";
+import { Sonner } from "@/app/components/Sonner";
 
 const grotesk = Space_Grotesk({
    variable: "--font-grotesk",
@@ -15,8 +15,9 @@ const figtree = Figtree({
 });
 
 export const metadata: Metadata = {
-   title: "Cari Foto Mahasiswa ABM",
-   description: "Aplikasi untuk mencari foto mahasiswa ABM",
+   title: "Cari Mahasiswa ABM",
+   description:
+      "Temukan mahasiswa ABM dengan mudah. Aplikasi pencarian online yang cepat, ringan, dan gratis untuk kebutuhan kampus dan dokumentasi. (cocok untuk kamu yg suka stalking 😋)",
    keywords: ["foto mahasiswa", "ABM", "cari foto", "mahasiswa ABM"],
    icons: {
       icon: "/abm.png",
@@ -59,7 +60,7 @@ export default function RootLayout({
                disableTransitionOnChange
             >
                {children}
-               <Toaster position="top-center" />
+               <Sonner position="top-center" />
             </ThemeProvider>
          </body>
       </html>

@@ -3,13 +3,20 @@
 :root {
    --background: var(--color-white);
    --foreground: var(--color-neutral-950);
+   --foreground-secondary: var(--color-neutral-300);
    --outline: var(--color-neutral-300);
 }
 
 @theme inline {
    --color-background: var(--background);
    --color-foreground: var(--foreground);
+   --color-secondary: var(--foreground-secondary);
    --color-outline: var(--outline);
+}
+
+::selection {
+   color: var(--background);
+   background-color: var(--foreground);
 }
 
 @theme {
@@ -42,4 +49,8 @@ input[type="number"] {
 
 button {
    cursor: pointer;
+}
+
+button:disabled {
+   cursor: not-allowed;
 }

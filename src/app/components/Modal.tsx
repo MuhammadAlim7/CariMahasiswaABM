@@ -17,10 +17,10 @@ interface MahasiswaData {
 
 export default function Modal({
    data,
-   setOpen,
+   handleClose,
 }: {
    data: MahasiswaData;
-   setOpen: (open: boolean) => void;
+   handleClose: () => void;
 }) {
    const [imageError, setImageError] = useState<boolean>(false);
 
@@ -64,7 +64,8 @@ export default function Modal({
                   <div className="mb-2 flex items-center justify-end">
                      <div className="flex items-center gap-2">
                         <button
-                           onClick={() => setOpen(false)}
+                           type="button"
+                           onClick={handleClose}
                            className="text-neutral-400 hover:text-neutral-900"
                         >
                            <X className="m-1 size-4" />
