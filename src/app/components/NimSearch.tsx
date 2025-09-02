@@ -77,7 +77,6 @@ export default function NimSearch() {
          e.target.value = "";
          return;
       }
-      e.target.value = value.replace(/[^a-zA-Z\s]/g, "").toUpperCase();
 
       e.target.setCustomValidity("");
    }
@@ -144,6 +143,8 @@ export default function NimSearch() {
             // console.log("load 01");
             const result = await fetchNimFromName();
 
+            console.table(result?.data);
+
             const nim = result.data?.[0]?.nim;
             if (!nim) {
                // console.log("load step 01 - failed", "NIM tidak ditemukan");
@@ -203,14 +204,14 @@ export default function NimSearch() {
    }
 
    async function handleClose() {
-      toast("Close Popup?", {
+      toast("Tutup Data?", {
          id: "close",
          classNames: {
             toast: "flex ",
             actionButton: "!ml-0",
          },
          action: {
-            label: "Close",
+            label: "Tutup",
             onClick: () => {
                setData(null);
                inputNimRefs.current.forEach((input) => {
@@ -218,7 +219,7 @@ export default function NimSearch() {
                });
             },
          },
-         cancel: { label: "Cancel", onClick: () => {} },
+         cancel: { label: "Batal", onClick: () => {} },
          actionButtonStyle: {
             background: "var(--color-red-600)",
             color: "var(--background)",
@@ -288,7 +289,7 @@ export default function NimSearch() {
                         title="Name lengkap dengan spasi"
                         onChange={(e) => handleChangeName(e)}
                         autoComplete="off"
-                        className="border-outline focus:ring-foreground h-11 w-full rounded-md border text-center text-sm font-semibold text-neutral-800 transition-all duration-150 outline-none focus:z-10 focus:ring-2"
+                        className="border-outline focus:ring-foreground h-11 w-full rounded-md border text-center text-sm font-semibold text-neutral-800 uppercase transition-all duration-150 outline-none focus:z-10 focus:ring-2"
                      />
                   ) : (
                      <motion.div

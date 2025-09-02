@@ -6,9 +6,6 @@ export default function Home() {
          <div className="grid max-w-screen-sm gap-2">
             <NimSearch />
          </div>
-         <div className="absolute top-0 left-[calc(100%-96px)]">
-            <aside className="bg-cyan-400 p-4">.</aside>
-         </div>
       </div>
    );
 }

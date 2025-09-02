@@ -3,6 +3,7 @@ import { Space_Grotesk, Figtree } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { Sonner } from "@/app/components/Sonner";
+const GKEY = process.env.GOOGLE_SITE_VERIFICATION;
 
 const grotesk = Space_Grotesk({
    variable: "--font-grotesk",
@@ -17,13 +18,19 @@ const figtree = Figtree({
 export const metadata: Metadata = {
    title: "Cari Mahasiswa ABM",
    description:
-      "Temukan mahasiswa ABM dengan mudah. Aplikasi pencarian online yang cepat, ringan, dan gratis untuk kebutuhan kampus dan dokumentasi. (cocok untuk kamu yg suka stalking 😋)",
-   keywords: ["foto mahasiswa", "ABM", "cari foto", "mahasiswa ABM"],
+      "Cek mahasiswa ABM dengan mudah. Aplikasi pencarian yang cepat, ringan, dan gratis untuk kebutuhan mu. (cocok untuk kamu yg suka stalking 😋)",
+   keywords: [
+      "foto mahasiswa",
+      "ABM",
+      "cari foto",
+      "mahasiswa ABM",
+      "cek mahasiaswa abm",
+   ],
    icons: {
       icon: "/abm.png",
    },
    other: {
-      "google-site-verification": "11ND7Lq7wqVz2HhllgMw5LZWB5FUxTDMtmrbx0LetDQ",
+      "google-site-verification": GKEY as string,
       "theme-color": "#ffffff",
    },
    robots: {
@@ -34,8 +41,9 @@ export const metadata: Metadata = {
       { name: "Muhammad Nur Alim", url: "https://muhammadalim7.github.io/" },
    ],
    openGraph: {
-      title: "Cari Foto Mahasiswa ABM",
-      description: "Aplikasi untuk mencari foto mahasiswa ABM",
+      title: "Cari Mahasiswa ABM",
+      description:
+         "Cek mahasiswa ABM dengan mudah. Aplikasi pencarian yang cepat, ringan, dan gratis untuk kebutuhan mu. (cocok untuk kamu yg suka stalking 😋)",
       url: "https://cari-mahasiswa-abm.vercel.app/",
       siteName: "Cari Foto Mahasiswa ABM",
       locale: "id_ID",
@@ -56,7 +64,6 @@ export default function RootLayout({
             <ThemeProvider
                attribute="class"
                defaultTheme="light"
-               enableSystem
                disableTransitionOnChange
             >
                {children}
