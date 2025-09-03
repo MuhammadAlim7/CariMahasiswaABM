@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as cheerio from "cheerio";
 
+export const runtime = "nodejs";
+
 export async function GET(request: NextRequest) {
    const { searchParams } = new URL(request.url);
    const name = searchParams.get("name")?.trim();
@@ -71,6 +73,13 @@ export async function GET(request: NextRequest) {
 
          results.push({ nama, nim, perguruan_tinggi, program_studi });
       });
+
+      if (results.length === 0) {
+         return NextResponse.json(
+            { error: "Data tidak ditemukan" },
+            { status: 404 },
+         );
+      }
 
       return NextResponse.json({
          query,

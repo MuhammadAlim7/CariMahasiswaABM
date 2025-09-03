@@ -136,14 +136,16 @@ export default function NimSearch() {
                   },
                });
                const json = await res.json();
-               if (!res.ok) throw new Error(json.error || "Unknown error");
+               if (!res.ok) {
+                  throw new Error(json.error || "Unknown error");
+               }
                return json;
             };
 
             // console.log("load 01");
             const result = await fetchNimFromName();
 
-            console.table(result?.data);
+            // console.table(result?.data);
 
             const nim = result.data?.[0]?.nim;
             if (!nim) {
@@ -268,7 +270,7 @@ export default function NimSearch() {
 
             <motion.div
                layout
-               className="border-secondary bg-background flex w-80 justify-center overflow-hidden rounded-xl border p-2"
+               className="border-secondary bg-background flex w-80 flex-col justify-center overflow-hidden rounded-xl border p-2"
             >
                <AnimatePresence>
                   {inputTypeName ? (
@@ -369,7 +371,24 @@ export default function NimSearch() {
                      </motion.div>
                   )}
                </AnimatePresence>
+               {inputTypeName && (
+                  <motion.span
+                     initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                     animate={{ opacity: 1, height: 12, marginTop: 8 }}
+                     exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                     transition={{
+                        duration: 0.8,
+                        delay: 1.0,
+                        ease: [0, 0.71, 0.2, 1.01],
+                     }}
+                     layout
+                     className="text-center text-xs"
+                  >
+                     Pencarian nama masih dalam mode exprimental
+                  </motion.span>
+               )}
             </motion.div>
+
             <motion.div
                layout
                className="flex items-center justify-between gap-x-2 p-2"
