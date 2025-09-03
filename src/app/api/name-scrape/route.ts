@@ -74,6 +74,12 @@ export async function GET(request: NextRequest) {
          results.push({ nama, nim, perguruan_tinggi, program_studi });
       });
 
+      console.log({
+         query,
+         count: results.length,
+         data: results,
+      });
+
       if (results.length === 0) {
          return NextResponse.json(
             { error: "Data tidak ditemukan" },
