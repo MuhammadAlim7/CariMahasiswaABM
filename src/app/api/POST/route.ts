@@ -20,6 +20,8 @@ export async function POST(req: NextRequest) {
          );
          const json = await res.json();
 
+         console.log(json?.error);
+
          if (!res.ok) {
             return NextResponse.json(
                { error: json.error },
@@ -35,10 +37,12 @@ export async function POST(req: NextRequest) {
          `http://localhost:3000/api/nim-scrape?nim=${_nim}`,
          {
             headers: { Authorization: `Bearer ${KEY}` },
-            next: { revalidate: 3600 },
+            // next: { revalidate: 3600 },
          },
       );
       const json = await res.json();
+
+      console.log(json?.error);
 
       if (!res.ok)
          return NextResponse.json(
