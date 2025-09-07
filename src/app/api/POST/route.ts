@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
    try {
       const { name, nim }: { name?: string; nim?: string } = await req.json();
+      const BASE_URL = req.nextUrl.origin;
       const KEY = process.env.INTERNAL_API_TOKEN;
       console.log({ name, nim });
 
@@ -11,16 +12,11 @@ export async function POST(req: NextRequest) {
 
       // kalau cari berdasarkan nama
       if (name) {
-         const res = await fetch(
-            `http://localhost:3000/api/name-scrape?name=${name}`,
-            {
-               headers: { Authorization: `Bearer ${KEY}` },
-               next: { revalidate: 3600 },
-            },
-         );
+         const res = await fetch(`${BASE_URL}/api/name-scrape?name=${name}`, {
+            headers: { Authorization: `Bearer ${KEY}` },
+            next: { revalidate: 3600 },
+         });
          const json = await res.json();
-
-         console.log(json?.error);
 
          if (!res.ok) {
             return NextResponse.json(
@@ -33,16 +29,11 @@ export async function POST(req: NextRequest) {
       }
 
       // ambil data berdasarkan NIM
-      const res = await fetch(
-         `http://localhost:3000/api/nim-scrape?nim=${_nim}`,
-         {
-            headers: { Authorization: `Bearer ${KEY}` },
-            // next: { revalidate: 3600 },
-         },
-      );
+      const res = await fetch(`${BASE_URL}/api/nim-scrape?nim=${_nim}`, {
+         headers: { Authorization: `Bearer ${KEY}` },
+         next: { revalidate: 3600 },
+      });
       const json = await res.json();
-
-      console.log(json?.error);
 
       if (!res.ok)
          return NextResponse.json(
