@@ -12,13 +12,17 @@ const nextConfig: NextConfig = {
    images: {
       remotePatterns: [
          {
-            protocol: "http",
+            protocol: "https",
             hostname: "scan.stie-mce.ac.id",
             pathname: "/photo/**",
          },
       ],
    },
-   serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
+   logging: {
+      fetches: {
+         fullUrl: true,
+      },
+   },
 };
 
 export default nextConfig;

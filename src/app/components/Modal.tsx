@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "motion/react";
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -8,11 +7,11 @@ import { X } from "lucide-react";
 interface MahasiswaData {
    name: string;
    image: string;
-   program: string;
+   nim: string;
+   nama_prodi: string;
    batch: string;
    gender: string;
    status: string;
-   rawNpk?: string;
 }
 
 export default function Modal({
@@ -22,8 +21,6 @@ export default function Modal({
    data: MahasiswaData;
    handleClose: () => void;
 }) {
-   const [imageError, setImageError] = useState<boolean>(false);
-
    function toTitleCase(str: string) {
       return str
          .toLowerCase()
@@ -31,6 +28,9 @@ export default function Modal({
          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
          .join(" ");
    }
+
+   const ENCODED_IMG_URL = Buffer.from(data.image).toString("base64");
+   const FILENAME_URL = data.name.trim().replaceAll(" ", "");
 
    return (
       <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -77,24 +77,12 @@ export default function Modal({
                <div className="mr-2 flex gap-4">
                   <div className="">
                      <Image
-                        src={data.image}
-                        alt={`${data.rawNpk}`}
+                        src={`/api/image/${FILENAME_URL}?file=${ENCODED_IMG_URL}`}
+                        alt={`${data.nim}`}
                         width={150}
                         height={200}
                         className={cn(
                            "aspect-[3/4] h-full overflow-hidden rounded-lg border border-neutral-300 object-cover",
-                           imageError && "hidden",
-                        )}
-                        onError={() => setImageError(true)}
-                     />
-                     <Image
-                        src="/image.png"
-                        alt={`${data.rawNpk}`}
-                        width={150}
-                        height={200}
-                        className={cn(
-                           "aspect-[3/4] h-full overflow-hidden rounded-lg border border-neutral-300 object-cover",
-                           !imageError && "hidden",
                         )}
                      />
                   </div>
@@ -112,7 +100,7 @@ export default function Modal({
                            Nomor Pokok Mahasiswa
                         </div>
                         <div className="text-lg font-bold tracking-wide sm:text-2xl">
-                           {data.rawNpk}
+                           {data.nim}
                         </div>
                      </div>
                      <div className="sm:hidden">
@@ -120,7 +108,7 @@ export default function Modal({
                            <span className="">Program Studi</span>
                         </div>
                         <div className="text-lg font-bold tracking-wide sm:text-2xl">
-                           {toTitleCase(data.program)}
+                           {toTitleCase(data.nama_prodi)}
                         </div>
                      </div>
                      <div className="flex gap-8">
@@ -132,7 +120,7 @@ export default function Modal({
                               <span className="block sm:hidden">Prodi</span>
                            </div>
                            <div className="font-bold tracking-wide sm:text-2xl">
-                              {toTitleCase(data.program)}
+                              {toTitleCase(data.nama_prodi)}
                            </div>
                         </div>
                         <div className="">

@@ -1,109 +1,113 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
-import * as cheerio from "cheerio";
+import Base64 from "crypto-js/enc-base64";
+import Pkcs7 from "crypto-js/pad-pkcs7";
+import AES from "crypto-js/aes";
+import Utf8 from "crypto-js/enc-utf8";
 
-export const runtime = "nodejs";
-
-export async function GET(request: NextRequest) {
-   const { searchParams } = new URL(request.url);
-   const name = searchParams.get("name")?.trim();
-
-   const authHeader = request.headers.get("authorization");
+export async function GET(req: NextRequest) {
+   const { searchParams } = new URL(req.url);
+   const name = searchParams.get("name")?.trim().toUpperCase();
+   const authHeader = req.headers.get("authorization");
    const KEY = process.env.INTERNAL_API_TOKEN;
+   const ORIGIN = process.env.NAMESCRAPE_URL;
 
-   if (!authHeader || authHeader !== `Bearer ${KEY}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+   const validToken = `Bearer ${KEY}`;
+
+   if (authHeader !== validToken) {
+      return NextResponse.json(
+         {
+            error: "Unauthorized",
+            code: 401,
+         },
+         { status: 401 },
+      );
    }
 
-   const NAME_URL = process.env.NAMESCRAPE_URL;
+   const AES_KEY = Base64.parse(process.env.AES_SECRET_KEY!);
+   const AES_IV = Base64.parse(process.env.AES_IV!);
+
+   const API_URL = process.env.NAMESCRAPE_API_URL;
    const QUERY_URL = process.env.QUERY_NAMESCRAPE;
 
    if (!name) {
       return NextResponse.json(
-         { error: "Parameter 'name' diperlukan." },
+         { error: "Parameter 'name' diperlukan.", code: 400 },
          { status: 400 },
       );
    }
 
    const query = `${QUERY_URL} ${name}`;
-   const targetUrl = `${NAME_URL}/${encodeURIComponent(query)}`;
+   const targetUrl = `${API_URL}/${encodeURIComponent(query)}`;
 
-   let browser;
+   const headers: Record<string, string> = {};
+
+   if (ORIGIN) {
+      headers["Origin"] = ORIGIN;
+      headers["Referer"] = `${ORIGIN}/`;
+   }
 
    try {
-      const isVercel = !!process.env.VERCEL_ENV;
-
-      let puppeteer: any;
-      let launchOptions: any = {
-         headless: true,
-      };
-
-      if (isVercel) {
-         const chromium = (await import("@sparticuz/chromium")).default;
-         puppeteer = await import("puppeteer-core");
-         launchOptions = {
-            ...launchOptions,
-            args: chromium.args,
-            executablePath: await chromium.executablePath(),
-         };
-      } else {
-         puppeteer = await import("puppeteer");
-      }
-
-      browser = await puppeteer.launch(launchOptions);
-      const page = await browser.newPage();
-      await page.goto(targetUrl, { waitUntil: "networkidle2" });
-
-      const html = await page.content();
-      const $ = cheerio.load(html);
-
-      const results: {
+      const result: {
+         id: string;
          nama: string;
          nim: string;
-         perguruan_tinggi: string;
-         program_studi: string;
+         nama_pt: string;
+         sinkatan_pt: string;
+         nama_prodi: string;
       }[] = [];
 
-      $("table tbody tr").each((_, row) => {
-         const tds = $(row).find("td");
-         const nama = $(tds[0]).text().trim();
-         const nim = $(tds[1]).text().trim();
-         const perguruan_tinggi = $(tds[2]).text().trim();
-         const program_studi = $(tds[3]).text().trim();
-
-         results.push({ nama, nim, perguruan_tinggi, program_studi });
+      const res = await fetch(targetUrl, {
+         method: "GET",
+         headers,
       });
 
-      console.log({
-         query,
-         count: results.length,
-         data: results,
-      });
+      const data = await res.json();
 
-      if (results.length === 0) {
+      function decryptData(encryptedData: any) {
+         const decrypted = AES.decrypt(encryptedData, AES_KEY, {
+            iv: AES_IV,
+            padding: Pkcs7,
+         });
+
+         return decrypted.toString(Utf8);
+      }
+
+      // console.log(JSON.parse(decryptData(data)));
+
+      const parsed = JSON.parse(decryptData(data));
+      result.push(...(parsed?.mahasiswa ?? []));
+
+      if (!result || result.length === 0) {
          return NextResponse.json(
-            { error: "Data tidak ditemukan" },
+            { query: query, error: "Data tidak ditemukan", code: 404 },
             { status: 404 },
          );
       }
 
-      return NextResponse.json({
-         query,
-         count: results.length,
-         data: results,
-      });
-   } catch (error: any) {
-      console.error("Scraping Error:", error);
       return NextResponse.json(
          {
+            query: query,
+            count: result.length,
+            data: result,
+            code: 200,
+         },
+         {
+            status: 200,
+            headers: {
+               "Cache-Control": "public, max-age=3600, must-revalidate",
+            },
+         },
+      );
+   } catch (error: any) {
+      return NextResponse.json(
+         {
+            query: query,
             error: "Scraping gagal",
             detail: error.message || String(error),
+            code: 500,
          },
          { status: 500 },
       );
-   } finally {
-      if (browser) {
-         await browser.close();
-      }
    }
 }

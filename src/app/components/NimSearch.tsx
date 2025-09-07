@@ -11,11 +11,11 @@ export default function NimSearch() {
    interface MahasiswaData {
       name: string;
       image: string;
-      program: string;
+      nim: string;
+      nama_prodi: string;
       batch: string;
       gender: string;
       status: string;
-      rawNpk: string;
    }
 
    const inputNimRefs = useRef<HTMLInputElement[]>([]);
@@ -71,10 +71,22 @@ export default function NimSearch() {
    function handleChangeName(e: React.ChangeEvent<HTMLInputElement>) {
       const value = e.target.value;
 
-      if (!/^[a-zA-Z\s]*$/.test(value)) {
-         e.target.setCustomValidity("Nama Lengkap");
-         e.target.reportValidity();
-         e.target.value = "";
+      const allowed = /^[a-zA-Z\s'-]*$/;
+
+      if (!allowed.test(value)) {
+         const cleaned = value.replace(/[^a-zA-Z\s'-]/g, "");
+         e.target.value = cleaned;
+
+         if (cleaned !== value) {
+            e.target.setCustomValidity(
+               "Tulis nama lengkap dengan benar yaa :)",
+            );
+            e.target.reportValidity();
+
+            setTimeout(() => {
+               e.target.setCustomValidity("");
+            }, 3000);
+         }
          return;
       }
 
@@ -98,19 +110,97 @@ export default function NimSearch() {
       setFocusedIndex(null);
    }
 
+   // DEPRECATED HANDLESUBMIT
+   // async function handleSubmit(e: React.FormEvent) {
+   //    e.preventDefault();
+
+   //    // Validasi: pastikan semua input terisi
+   //    const inputNim = inputNimRefs.current.some((input) => !input?.value);
+   //    const inputName = !inputNameRef.current?.value;
+   //    const isEmpty = inputTypeName ? inputName : inputNim;
+   //    const submitButton = await submitButtonRef.current;
+   //    const KEY = process.env.NEXT_PUBLIC_INTERNAL_API_TOKEN;
+
+   //    if (isEmpty) {
+   //       toast.error("Semua kolom harus diisi!");
+   //       return;
+   //    }
+
+   //    const toastId = toast.loading("Loading...");
+
+   //    try {
+   //       if (submitButton) submitButton.disabled = true;
+   //       // console.log("Button disabled");
+
+   //       let nim;
+
+   //       if (inputTypeName) {
+   //          // mode: cari berdasarkan nama
+   //          const name = inputNameRef.current?.value;
+
+   //          const fetchNimFromName = async () => {
+   //             const res = await fetch(`/api/name-scrape?name=${name}`, {
+   //                headers: {
+   //                   Authorization: `Bearer ${KEY}`,
+   //                },
+   //             });
+   //             const json = await res.json();
+   //             if (!res.ok) {
+   //                throw new Error(json.error || "Unknown error");
+   //             }
+   //             return json;
+   //          };
+
+   //          // console.log("load 01");
+   //          const result = await fetchNimFromName();
+
+   //          nim = result.data?.[0]?.nim;
+   //       } else {
+   //          // mode: input manual nim
+   //          nim = inputNimRefs.current
+   //             .map((input) => input?.value || "")
+   //             .join("");
+   //       }
+
+   //       // fetch data berdasarkan NPK
+   //       const fetchDataByNpk = async () => {
+   //          const res = await fetch(`/api/nim-scrape?nim=${nim}`, {
+   //             headers: {
+   //                Authorization: `Bearer ${KEY}`,
+   //             },
+   //          });
+   //          const json = await res.json();
+   //          if (!res.ok) throw new Error(json.error || "Unknown error");
+   //          return json;
+   //       };
+
+   //       const result = await fetchDataByNpk();
+   //       setData(result.data[0]);
+
+   //       toast.success("Data berhasil ditemukan!", { id: toastId });
+
+   //       if (submitButton) submitButton.disabled = false;
+   //       // console.log("Button enabled");
+   //    } catch (err: unknown) {
+   //       const errorMessage =
+   //          err instanceof Error ? err.message : "Terjadi kesalahan";
+   //       toast.error(errorMessage, {
+   //          id: toastId,
+   //          description: "Coba ulang dan periksa nama lengkap mu",
+   //       });
+
+   //       if (submitButton) submitButton.disabled = false;
+   //       // console.log("Button enabled");
+   //    }
+   // }
+
    async function handleSubmit(e: React.FormEvent) {
       e.preventDefault();
 
-      // Validasi: pastikan semua input terisi
       const inputNim = inputNimRefs.current.some((input) => !input?.value);
       const inputName = !inputNameRef.current?.value;
       const isEmpty = inputTypeName ? inputName : inputNim;
-      const submitButton = await submitButtonRef.current;
-      const KEY = process.env.NEXT_PUBLIC_INTERNAL_API_TOKEN;
-
-      function formatNpk(nim: string) {
-         return `${nim[0]}.${nim.slice(1, 5)}.${nim[5]}.${nim.slice(6, 11)}`;
-      }
+      const submitButton = submitButtonRef.current;
 
       if (isEmpty) {
          toast.error("Semua kolom harus diisi!");
@@ -121,67 +211,35 @@ export default function NimSearch() {
 
       try {
          if (submitButton) submitButton.disabled = true;
-         // console.log("Button disabled");
 
-         let raw, npk;
+         const payload: { name: string | null; nim: string | null } = {
+            name: null,
+            nim: null,
+         };
 
          if (inputTypeName) {
             // mode: cari berdasarkan nama
-            const name = inputNameRef.current?.value;
-
-            const fetchNimFromName = async () => {
-               const res = await fetch(`/api/name-scrape?name=${name}`, {
-                  headers: {
-                     Authorization: `Bearer ${KEY}`,
-                  },
-               });
-               const json = await res.json();
-               if (!res.ok) {
-                  throw new Error(json.error || "Unknown error");
-               }
-               return json;
-            };
-
-            // console.log("load 01");
-            const result = await fetchNimFromName();
-
-            // console.table(result?.data);
-
-            const nim = result.data?.[0]?.nim;
-            if (!nim) {
-               // console.log("load step 01 - failed", "NIM tidak ditemukan");
-               throw new Error("NIM tidak ditemukan");
-            }
-            // console.log("load 01 success");
-
-            raw = nim;
-            npk = formatNpk(raw);
+            payload.name = inputNameRef.current?.value || null;
          } else {
             // mode: input manual nim
-            raw = inputNimRefs.current
-               .map((input) => input?.value || "")
+            payload.nim = inputNimRefs.current
+               .map((input) => input?.value || null)
                .join("");
-            npk = formatNpk(raw);
          }
 
-         // fetch data berdasarkan NPK
-         const fetchDataByNpk = async () => {
-            const res = await fetch(`/api/nim-scrape?npk=${npk}`, {
-               headers: {
-                  Authorization: `Bearer ${KEY}`,
-               },
-            });
-            const json = await res.json();
-            if (!res.ok) throw new Error(json.error || "Unknown error");
-            return json;
-         };
+         const res = await fetch("/api/POST", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+         });
 
-         const data = await fetchDataByNpk();
-         setData({ ...data, rawNpk: raw });
+         const result = await res.json();
+         if (!res.ok) throw new Error(result.error || "Unknown error");
+
+         setData(result.data);
          toast.success("Data berhasil ditemukan!", { id: toastId });
 
          if (submitButton) submitButton.disabled = false;
-         // console.log("Button enabled");
       } catch (err: unknown) {
          const errorMessage =
             err instanceof Error ? err.message : "Terjadi kesalahan";
@@ -191,7 +249,6 @@ export default function NimSearch() {
          });
 
          if (submitButton) submitButton.disabled = false;
-         // console.log("Button enabled");
       }
    }
 
@@ -287,7 +344,7 @@ export default function NimSearch() {
                         type="text"
                         name="name"
                         required
-                        pattern="^[A-Za-z\s]+$"
+                        pattern="^[a-zA-Z\s\-']*$"
                         title="Name lengkap dengan spasi"
                         onChange={(e) => handleChangeName(e)}
                         autoComplete="off"
@@ -371,7 +428,7 @@ export default function NimSearch() {
                      </motion.div>
                   )}
                </AnimatePresence>
-               {inputTypeName && (
+               {/* {inputTypeName && (
                   <motion.span
                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
                      animate={{ opacity: 1, height: 12, marginTop: 8 }}
@@ -386,7 +443,7 @@ export default function NimSearch() {
                   >
                      Pencarian nama masih dalam mode exprimental
                   </motion.span>
-               )}
+               )} */}
             </motion.div>
 
             <motion.div
